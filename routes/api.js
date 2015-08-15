@@ -61,11 +61,77 @@ router.get('/cbquote', function(req, res, next) {
     });
 });
 
-router.get('/cbbalance', function(req, res, next) {
+router.post('/cbbalance', function(req, res, next) {
     if(!req.query.token) {
         res.status(400).send('Did not specify token');
         return;
     }
+});
+
+router.get('/cbauth', function(req, res, next) {
+    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2Flocalhost:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
+});
+
+router.get('/cbcallback', function(req, res, next) {
+    //res.send(req.query);
+/*    var postData = {
+        'grant_type' : 'authorization_history',
+        'code' : req.query.code,
+        'client_id' : keys.cbkey,
+        'client_secret' : keys.cbsecret,
+        'redirect_uri' : 'localhost:3000/oauthfinal'
+    }
+    var options = {
+        hostname: 'www.google.com',
+        port: 80,
+        path: '/upload',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            //'Content-Length': postData.length
+        }
+    }*/
+
+    var request = require('request');
+
+    request({
+        url: 'https://api.coinbase.com/oauth/token', //URL to hit
+        qs: {
+            'grant_type' : 'authorization_code',
+            'code' : req.query.code,
+            'client_id' : keys.cbkey,
+            'client_secret' : keys.cbsecret,
+            'redirect_uri' : 'http://localhost:3000/cbcallback'
+        },
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    }, function(error, response, body){
+        if(error) {
+            console.log(error);
+            res.status(400).send("Shit.");
+        } else {
+            console.log(response.statusCode, body);
+            res.send("Done");
+        }
+    });
+});
+
+router.get('/oauthfinal', function(req, res, next) {
+    console.log(req.query);
+});
+
+
+var MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+
+// Connection URL
+var url = 'mongodb://localhost:27017/fox';
+// Use connect method to connect to the Server
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected correctly to server");
 });
 
 module.exports = router;
