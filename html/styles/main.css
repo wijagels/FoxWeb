@@ -44,8 +44,8 @@ body {
 
 #logo {
     position: absolute;
-    margin: 30px;
-    left: 16%;
+    margin: 24px;
+    left: 12%;
     width: 120px;
 }
 
@@ -77,6 +77,8 @@ body {
     overflow: hidden;
     background-size: cover;
     padding: 40px;
+    text-align: center;
+    top: 50px;
 }
 
 #button {
@@ -218,6 +220,12 @@ body {
 }
 
 .social-icon {
+    float: right;
     height: 70px;
     margin: 10px;
 }
+
+a {
+    color:inherit !important;
+}
+

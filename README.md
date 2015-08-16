@@ -1,16 +1,16 @@
-# FoxWeb
+# fox
 
 BitCoin made easy.
 
 ### Tech
 
-FoxWeb is built with:
+fox is built with:
 
-* [Thing] - Why this thing
-* [Thing] - Why this thing
-* [Thing] - Why this thing
+* [BlockChain] - Bitcoin transactions
+* [Android] - Front-end application
+* [Node.js] - Dev Language
 
-FoxWeb is open source with a [public repository](https://github.com/wijagels/FoxWeb) on GitHub.
+fox is open source with a [public repository](https://github.com/wijagels/FoxWeb) on GitHub.
 
 ### Made by
 Hacker|Representing|Worked on
@@ -21,9 +21,3 @@ Hacker|Representing|Worked on
 [William Jagels](http://github.com/wijagels) 	| Binghamton University					| Back-End
 [Fahim Kabir](http://devpost.com/Fahim7755)    	| Guelph Collegiate Vocational Institute| Design          
 [Vicki Long](http://github.com/vickilong)     	| Carnegie Mellon University 			| Android
-
-### Todos
-
- - Have everyone awake
- - Let Fahim finish early draft of design
- - Dank memes
