@@ -1,6 +1,6 @@
 body {
 	margin: 0px;
-    font-family: 'Open Sans';
+    font-family: 'Open Sans' !important;
     overflow-x: hidden;
 }
 
@@ -69,23 +69,27 @@ body {
 }
 
 #footer {
+    position: relative;
+    width: auto;
     height: 200px;
     background: #505050;
     color: #fff;
-    padding: 50px;
+    overflow: hidden;
+    background-size: cover;
+    padding: 40px;
 }
 
 #button {
     margin: 60px auto;
-    padding:15px;
+    padding:12px;
     background: #ff911b;
-    width: 300px;
-    font-size: 40px;
-    border-radius: 6px;
+    width: 200px;
+    font-size: 26px;
+    border-radius: 3px;
 }
 
 #phone-img {
-    width:20%; 
+    height: 300px;
     margin: 40px;
 }
 
@@ -207,4 +211,9 @@ body {
 #logo-img {
     width: inherit;
     height: auto;
+}
+
+.social-icon {
+    height: 70px;
+    margin: 10px;
 }
