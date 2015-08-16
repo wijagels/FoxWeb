@@ -1,6 +1,7 @@
 var express = require('express');
 var router= express.Router();
 var blockchain = require('blockchain.info');
+var request = require('request');
 
 router.post('/tx', function(req, res, next) {
     console.log(req.query);
@@ -24,12 +25,6 @@ router.post('/tx', function(req, res, next) {
 });
 
 var keys = require('./keys');
-var CbClient = require('coinbase').Client;
-var cbclient = new CbClient({'apiKey': keys.cbkey,
-    'apiSecret': keys.cbsecret,
-    'baseApiUri': 'https://api.sandbox.coinbase.com/v1/',
-    'tokenUri': 'https://api.sandbox.coinbase.com/oauth/token'
-});
 
 /**
  * Params:
@@ -56,8 +51,22 @@ router.post('/cbtx', function(req, res, next) {
 });
 
 router.get('/cbquote', function(req, res, next) {
+    var CbClient = require('coinbase').Client;
+    var cbclient = new CbClient({'apiKey': keys.cbkey, 'apiSecret': keys.cbsecret});
     cbclient.getBuyPrice({'qty': 1, 'currency': 'USD'}, function(err, obj) {
         res.send(obj.total.amount);
+    });
+});
+
+router.get('/chart', function(req, res, next) {
+    blockchain.statistics.getChartData('market-price', function(error, data) {
+        if(error) {
+            res.status(500).send("Something bad happened");
+            return;
+        }
+        else {
+            res.send(data);
+        }
     });
 });
 
@@ -66,33 +75,25 @@ router.post('/cbbalance', function(req, res, next) {
         res.status(400).send('Did not specify token');
         return;
     }
+    if(!req.query.refresh) {
+        res.status(400).send('Did not specify refresh token');
+        return;
+    }
+    var Client = require('coinbase').Client;
+    var client = new Client({'accessToken': req.query.token, 'refreshToken': req.query.refresh});
+    var Account = require('coinbase').model.Account;
+    client.getAccounts(function(err, accounts) {
+        accounts.forEach(function(acct) {
+            console.log('my bal: ' + acct.balance.amount + ' for ' + acct.name);
+        });
+    });
 });
 
 router.get('/cbauth', function(req, res, next) {
-    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2Flocalhost:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
+    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2F192.168.2.113:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
 });
 
 router.get('/cbcallback', function(req, res, next) {
-    //res.send(req.query);
-/*    var postData = {
-        'grant_type' : 'authorization_history',
-        'code' : req.query.code,
-        'client_id' : keys.cbkey,
-        'client_secret' : keys.cbsecret,
-        'redirect_uri' : 'localhost:3000/oauthfinal'
-    }
-    var options = {
-        hostname: 'www.google.com',
-        port: 80,
-        path: '/upload',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            //'Content-Length': postData.length
-        }
-    }*/
-
-    var request = require('request');
 
     request({
         url: 'https://api.coinbase.com/oauth/token', //URL to hit
@@ -101,7 +102,7 @@ router.get('/cbcallback', function(req, res, next) {
             'code' : req.query.code,
             'client_id' : keys.cbkey,
             'client_secret' : keys.cbsecret,
-            'redirect_uri' : 'http://localhost:3000/cbcallback'
+            'redirect_uri' : 'http://192.168.2.113:3000/cbcallback'
         },
         method: 'POST',
         headers: {
@@ -113,25 +114,14 @@ router.get('/cbcallback', function(req, res, next) {
             res.status(400).send("Shit.");
         } else {
             console.log(response.statusCode, body);
-            res.send("Done");
+            //res.send(response);
+            //res.send(JSON.stringify({
+                //'access_token' : JSON.parse(body).access_token,
+                //'refresh_token' : JSON.parse(body).refresh_token
+            //}));
+            res.redirect('fox://coinbase?access=' + JSON.parse(body).access_token + '&refresh=' + JSON.parse(body).refresh_token);
         }
     });
-});
-
-router.get('/oauthfinal', function(req, res, next) {
-    console.log(req.query);
-});
-
-
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/fox';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
 });
 
 module.exports = router;
