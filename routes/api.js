@@ -207,8 +207,8 @@ router.get('/cbrefresh', function(req, res, next) {
 });
 
 router.get('/cbauth', function(req, res, next) {
-    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2F192.168.2.113:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read,wallet:transactions:send,wallet:transactions:read&meta[send_limit_amount]=0.5");
-    //res.redirect("https://sandbox.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2F192.168.2.113:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
+    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2Fdefault-environment-u3uxmxg5ju.elasticbeanstalk.com%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read,wallet:transactions:send,wallet:transactions:read&meta[send_limit_amount]=0.5");
+    //res.redirect("https://sandbox.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2Fdefault-environment-u3uxmxg5ju.elasticbeanstalk.com%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
 });
 
 router.get('/cbcallback', function(req, res, next) {
@@ -220,7 +220,7 @@ router.get('/cbcallback', function(req, res, next) {
             'code' : req.query.code,
             'client_id' : keys.cbkey,
             'client_secret' : keys.cbsecret,
-            'redirect_uri' : 'http://192.168.2.113:3000/cbcallback'
+            'redirect_uri' : 'http://default-environment-u3uxmxg5ju.elasticbeanstalk.com/cbcallback'
         },
         method: 'POST',
         headers: {
