@@ -34,6 +34,8 @@ var keys = require('./keys');
 
 /**
  * Params:
+ * token
+ * refresh token
  * to - btc address to send to
  * amount - amount of BTC, decimals accepted
  */
@@ -53,21 +55,28 @@ router.get('/cbtx', function(req, res, next) {
     if(!req.query.refresh) {
         res.status(400).send('Did not specify refresh token');
         return;
-    }
+    h}
     var Client = require('coinbase').Client;
     var client = new Client({
         'accessToken': req.query.token,
         'refreshToken': req.query.refresh,
-        'baseApiUri': 'https://api.sandbox.coinbase.com/v2/',
-        'tokenUri': 'https://api.sandbox.coinbase.com/oauth/token'
+        'baseApiUri': 'https://api.coinbase.com/v2/',
+        'tokenUri': 'https://api.coinbase.com/oauth/token'
     });
     var Account = require('coinbase').model.Account;
     client.getAccounts(function(err, accounts) {
+        if(!accounts) {
+            res.status(400).send("Sheeeet you have no accounts");
+        }
         accounts[0].sendMoney({
             'to' : req.query.to,
             'amount' : req.query.amount,
             'notes' : 'Transaction from Fox'
         }, function(err, txn) {
+            if(!txn) {
+                res.status(400).send("Invalid transaction");
+                return;
+            }
             res.send(txn);
         });
     });
@@ -156,6 +165,39 @@ router.get('/cbbalance', function(req, res, next) {
     });
 });
 
+router.get('/cbtxns', function(req, res, next) {
+    if(!req.query.token) {
+        res.status(400).send('Did not specify token');
+        return;
+    }
+    if(!req.query.refresh) {
+        res.status(400).send('Did not specify refresh token');
+        return;
+    }
+    var Client = require('coinbase').Client;
+    var client = new Client({'accessToken': req.query.token, 'refreshToken': req.query.refresh,
+                            'baseApiUri': 'https://api.coinbase.com/v2/',
+    'tokenUri': 'https://api.coinbase.com/oauth/token'});
+    var Account = require('coinbase').model.Account;
+    client.getAccounts(function(err, accounts) {
+        if(!accounts || err) {
+            res.status(400).send(err);
+            return;
+        }
+        request({
+            url: 'https://api.coinbase.com/v2/accounts/' + accounts[0].id + '/transactions', //URL to hit
+            qs: {
+                'access_token' : req.query.token
+            },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        }, function(error, response, body){
+            res.send(JSON.parse(body).data);
+        });
+    });
+});
+
 router.get('/cbrefresh', function(req, res, next) {
     var Client = require('coinbase').Client;
     var client = new Client({'accessToken': req.query.token, 'refreshToken': req.query.refresh});
@@ -165,7 +207,8 @@ router.get('/cbrefresh', function(req, res, next) {
 });
 
 router.get('/cbauth', function(req, res, next) {
-    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2F192.168.2.113:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
+    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2F192.168.2.113:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read,wallet:transactions:send,wallet:transactions:read&meta[send_limit_amount]=0.5");
+    //res.redirect("https://sandbox.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2F192.168.2.113:3000%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
 });
 
 router.get('/cbcallback', function(req, res, next) {
