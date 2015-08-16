@@ -65,10 +65,40 @@ router.get('/chart', function(req, res, next) {
             return;
         }
         else {
+            var sma25 = simple_moving_averager(25);
+            data.sma = [];
+            for(var k in data.values) {
+                var d = new Date(data.values[k].x * 1000); //js expects ms since epoch, this api provides sec.
+                var fd = (d.getMonth() + 1) + "/" + d.getDate();
+                data.values[k].x = fd;
+                data.sma.push({
+                    'x' : fd,
+                    'y' : sma25(data.values[k].y)
+                });
+            }
             res.send(data);
         }
     });
 });
+
+/**
+ * http://rosettacode.org/wiki/Averages/Simple_moving_average#JavaScript
+ */
+function simple_moving_averager(period) {
+    var nums = [];
+    return function(num) {
+        nums.push(num);
+        if (nums.length > period)
+            nums.splice(0,1);  // remove the first element of the array
+        var sum = 0;
+        for (var i in nums)
+            sum += nums[i];
+        var n = period;
+        if (nums.length < period)
+            n = nums.length;
+        return(sum/n);
+    }
+}
 
 router.post('/cbbalance', function(req, res, next) {
     if(!req.query.token) {
