@@ -92,10 +92,18 @@ body {
 
 #phone-img {
     height: 300px;
-    margin: 40px;
-    
+    margin: 120px;
+/*    overflow: hidden;*/
+    transition-duration: 0.4s;
+    transition-property: transform;
 }
 
+@media (min-width:960px) {
+    #phone-img:hover {
+        content:url("../graphics/phone_rot.png");
+        transform: rotate(90deg);
+    }
+}
 
 
 @media (max-width: 960px) {
