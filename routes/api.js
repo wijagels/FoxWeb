@@ -64,20 +64,34 @@ router.get('/chart', function(req, res, next) {
             res.status(500).send("Something bad happened");
             return;
         }
-        else {
-            var sma25 = simple_moving_averager(25);
-            data.sma = [];
-            for(var k in data.values) {
-                var d = new Date(data.values[k].x * 1000); //js expects ms since epoch, this api provides sec.
-                var fd = (d.getMonth() + 1) + "/" + d.getDate();
-                data.values[k].x = fd;
-                data.sma.push({
+        var sma25 = simple_moving_averager(25);
+        data.sma = [];
+        for(var k in data.values) {
+            var d = new Date(data.values[k].x * 1000); //js expects ms since epoch, this api provides sec.
+            var fd = (d.getMonth() + 1) + "/" + d.getDate();
+            data.values[k].x = fd;
+            data.sma.push({
                     'x' : fd,
                     'y' : sma25(data.values[k].y)
                 });
-            }
-            res.send(data);
         }
+        res.send(data);
+    });
+});
+
+router.get('/chart/sma', function(req, res, next) {
+    blockchain.statistics.getChartData('market-price', function(error, data) {
+        if(error) {
+            res.status(500).send("Something bad happened");
+            return;
+        }
+        var sma = simple_moving_averager(parseInt(req.query.period));
+        for(var i in data.values) {
+            var d = new Date(data.values[i].x * 1000); //js expects ms since epoch, this api provides sec.
+            data.values[i].x = (d.getMonth() + 1) + "/" + d.getDate();
+            data.values[i].y = sma(data.values[i].y);
+        }
+        res.send(data);
     });
 });
 
