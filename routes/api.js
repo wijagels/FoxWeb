@@ -21,7 +21,13 @@ router.post('/tx', function(req, res, next) {
         res.status(400).send('Did not specify amount');
         return;
     }
-    res.send('hello');
+    var wallet = new blockchain.MyWallet(req.query.guid, req.query.password);
+    wallet.send({
+        'to' : req.query.to,
+        'amount' : req.query.amount,
+    }, function(err, result) {
+        res.send(result);
+    });
 });
 
 var keys = require('./keys');
@@ -31,7 +37,7 @@ var keys = require('./keys');
  * to - btc address to send to
  * amount - amount of BTC, decimals accepted
  */
-router.post('/cbtx', function(req, res, next) {
+router.get('/cbtx', function(req, res, next) {
     if(!req.query.to) {
         res.status(400).send('Did not specify to');
         return;
@@ -44,10 +50,27 @@ router.post('/cbtx', function(req, res, next) {
         res.status(400).send('Did not specify token');
         return;
     }
-    var note = '';
-    if(req.query.note) {
-        note = req.query.note;
+    if(!req.query.refresh) {
+        res.status(400).send('Did not specify refresh token');
+        return;
     }
+    var Client = require('coinbase').Client;
+    var client = new Client({
+        'accessToken': req.query.token,
+        'refreshToken': req.query.refresh,
+        'baseApiUri': 'https://api.sandbox.coinbase.com/v2/',
+        'tokenUri': 'https://api.sandbox.coinbase.com/oauth/token'
+    });
+    var Account = require('coinbase').model.Account;
+    client.getAccounts(function(err, accounts) {
+        accounts[0].sendMoney({
+            'to' : req.query.to,
+            'amount' : req.query.amount,
+            'notes' : 'Transaction from Fox'
+        }, function(err, txn) {
+            res.send(txn);
+        });
+    });
 });
 
 router.get('/cbquote', function(req, res, next) {
@@ -114,7 +137,7 @@ function simple_moving_averager(period) {
     }
 }
 
-router.post('/cbbalance', function(req, res, next) {
+router.get('/cbbalance', function(req, res, next) {
     if(!req.query.token) {
         res.status(400).send('Did not specify token');
         return;
@@ -124,12 +147,20 @@ router.post('/cbbalance', function(req, res, next) {
         return;
     }
     var Client = require('coinbase').Client;
-    var client = new Client({'accessToken': req.query.token, 'refreshToken': req.query.refresh});
+    var client = new Client({'accessToken': req.query.token, 'refreshToken': req.query.refresh,
+                            'baseApiUri': 'https://api.coinbase.com/v2/',
+                            'tokenUri': 'https://api.coinbase.com/oauth/token'});
     var Account = require('coinbase').model.Account;
     client.getAccounts(function(err, accounts) {
-        accounts.forEach(function(acct) {
-            console.log('my bal: ' + acct.balance.amount + ' for ' + acct.name);
-        });
+       res.send(accounts);
+    });
+});
+
+router.get('/cbrefresh', function(req, res, next) {
+    var Client = require('coinbase').Client;
+    var client = new Client({'accessToken': req.query.token, 'refreshToken': req.query.refresh});
+    client.refresh(function(err, result) {
+        res.send(result);
     });
 });
 
