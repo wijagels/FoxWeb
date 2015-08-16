@@ -13,14 +13,14 @@ FoxWeb is built with:
 FoxWeb is open source with a [public repository](https://github.com/wijagels/FoxWeb) on GitHub.
 
 ### Made by
-Hacker|Worked on|Representing
+Hacker|Representing|Worked on
 ---|---|---
-[Jack Cook](http://github.com/)      | What xe did | Bronx High School of Science | 
-[Brian Chuk](http://github.com/)     | What xe did | New York University       
-[Tim Hung](http://github.com/AvocadosConstant)       | What xe did | Binghamton University
-[William Jagels](http://github.com/) | What xe did | Binghamton University
-[Fahim Kabir](http://github.com/)    | What xe did | Guelph Collegiate Vocational Institute                   
-[Vicki Long](http://github.com/)     | What xe did | Carnegie Mellon University 
+[Brian Chuk](http://github.com/devChuk)     	| New York University       			| Android
+[Jack Cook](jackcook.nyc)      					| Bronx High School of Science 			| Android
+[Tim Hung](http://github.com/AvocadosConstant)	| Binghamton University					| Front-End
+[William Jagels](http://github.com/wijagels) 	| Binghamton University					| Back-End
+[Fahim Kabir](http://devpost.com/Fahim7755)    	| Guelph Collegiate Vocational Institute| Design          
+[Vicki Long](http://github.com/vickilong)     	| Carnegie Mellon University 			| Android
 
 ### Todos
 
