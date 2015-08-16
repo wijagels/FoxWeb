@@ -91,6 +91,7 @@ body {
 #phone-img {
     height: 300px;
     margin: 40px;
+    
 }
 
 
@@ -128,7 +129,8 @@ body {
     }
     
     #phone-img {
-        width:20%; 
+        height: 500px;  
+        content:url("../graphics/phone.png")
     }
 }
 
@@ -166,7 +168,8 @@ body {
     }
     
     #phone-img {
-        width:40%; 
+        height: 260px; 
+        content:url("../graphics/phone.png")
     }
 }
 
@@ -203,7 +206,8 @@ body {
     }
     
     #phone-img {
-        width:60%; 
+        height: 200px;  
+        content:url("../graphics/phone.png")
     }
 }
 
