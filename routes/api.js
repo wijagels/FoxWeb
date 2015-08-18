@@ -207,7 +207,7 @@ router.get('/cbrefresh', function(req, res, next) {
 });
 
 router.get('/cbauth', function(req, res, next) {
-    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2Ffoxwallet.elasticbeanstalk.com%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read,wallet:transactions:send,wallet:transactions:read&meta[send_limit_amount]=0.5");
+    res.redirect("https://www.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2Ffoxwallet.elasticbeanstalk.com%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read,wallet:transactions:send,wallet:transactions:read&meta[send_limit_amount]=0.5&meta[send_limit_currency]=USD");
     //res.redirect("https://sandbox.coinbase.com/oauth/authorize?response_type=code&client_id=" + keys.cbkey + "&redirect_uri=http%3A%2F%2Ffoxwallet.elasticbeanstalk.com%2Fcbcallback&state=134ef5504a94&scope=wallet:user:read,wallet:accounts:read");
 });
 
